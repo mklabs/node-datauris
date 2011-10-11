@@ -1,0 +1,13 @@
+{
+  "author": "mklabs",
+  "name": "datauri",
+  "description": "script to automate embedding of base64 images in CSS files",
+  "version": "0.0.0",
+  "bin": "./bin/datauri",
+  "directories": {
+    "man": "./docs/man/"
+  },
+  "dependencies": {
+    "mime": "~1.2.4"
+  }
+}

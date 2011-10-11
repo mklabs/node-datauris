@@ -1,0 +1,157 @@
+.\" Generated with Ronnjs/v0.1
+.\" http://github.com/kapouer/ronnjs/
+.
+.TH "NODE\-DATAURI" "1" "October 2011" "" ""
+.
+.SH "NAME"
+\fBnode-datauri\fR \-\- node\-script to automate the embedding of base64 images in CSS files
+.
+.SH "Usage"
+.
+.nf
+datauri path/to/css/file\.css
+datauri css/*\.css
+.
+.fi
+.
+.SH "Description"
+quick experiment on datauris / mhtml images embedding\.
+.
+.SH "Ressources"
+.
+.IP "\(bu" 4
+http://www\.nczonline\.net/blog/2009/10/27/data\-uris\-explained/
+.
+.IP "\(bu" 4
+http://www\.nczonline\.net/blog/2009/11/03/automatic\-data\-uri\-embedding\-in\-css\-files/
+.
+.IP "\(bu" 4
+http://nimbupani\.com/using\-data\-uris\-in\-css\.html
+.
+.IP "\(bu" 4
+http://www\.phpied\.com/data\-urls\-what\-are\-they\-and\-how\-to\-use/
+.
+.IP "\(bu" 4
+http://www\.phpied\.com/mhtml\-when\-you\-need\-data\-uris\-in\-ie7\-and\-under/
+.
+.IP "\(bu" 4
+http://www\.phpied\.com/data\-uris\-mhtml\-ie7\-win7\-vista\-blues/
+.
+.IP "\(bu" 4
+http://www\.phpied\.com/inline\-mhtml\-data\-uris/
+.
+.IP "\(bu" 4
+http://www\.stevesouders\.com/blog/2009/11/16/cssembed\-automatically\-data\-uri\-ize/
+.
+.IP "\(bu" 4
+http://msdn\.microsoft\.com/en\-us/library/ms526265(v=exchg\.10)\.aspx
+.
+.IP "\(bu" 4
+http://documentcloud\.github\.com/jammit/#embedding
+.
+.IP "" 0
+.
+.P
+Recommandation from documentcloud/jammit:
+.
+.P
+It\'s not recommended to embed all of your site\'s images, just the ones that conform to the following three rules:
+.
+.IP "\(bu" 4
+Images that are small\. Large images will simply delay the rendering of your CSS\. Jammit won\'t embed images larger than 32 kilobytes, because Internet Explorer 8 won\'t render them\.
+.
+.IP "\(bu" 4
+Images that are immediately visible\. It\'s better to leave the images that are hidden at page load time to download in the background\.
+.
+.IP "\(bu" 4
+Images that are referenced by a single CSS rule\. Referencing the same embedded image in multiple rules will cause that image\'s contents to be embedded more than once, defeating the purpose\. Replace the duplicated rules with an image\-specific HTML class, and you\'re good to go\.
+.
+.IP "" 0
+.
+.SH "Plan"
+.
+.IP "\(bu" 4
+only images that are small < 32kilobytes
+.
+.IP "\(bu" 4
+dealing with IE < 8: use of mhtml
+.
+.IP "" 0
+.
+.P
+use of datauris for modern browser, use of mhtml for IE < 8
+.
+.P
+with a build script, using stoyan\'s snippet
+.
+.IP "" 4
+.
+.nf
+#myid {
+  /* normal browsers */
+  background\-image: url("data:image/png;base64,iVBORw0[\.\.\.snip\.\.\.]");
+  /* IE < 8 targeted with the star hack */
+  *background\-image: url(mhtml:http://phpied\.com/mhtml\.css!somestring);
+}
+.
+.fi
+.
+.IP "" 0
+.
+.P
+or with \fB<html />\fR conditional comments \fIhttp://html5boilerplate\.com/docs/The\-markup/#ie\-html\-tag\-classes\fR
+.
+.IP "" 4
+.
+.nf
+\|\.mystuff {
+  /* normal browsers */
+  background\-image: url("data:image/png;base64,iVBORw0[\.\.\.snip\.\.\.]");
+}
+\|\.ie6 \.mystuff, \.ie7 \.mystuff {
+  /* IE < 8 */
+  background\-image: url(mhtml:http://phpied\.com/mhtml\.css!somestring);
+}
+.
+.fi
+.
+.IP "" 0
+.
+.P
+mhtml: have to use absolute urls\.\. http://msdn\.microsoft\.com/en\-us/library/ms526265(v=exchg\.10)\.aspx
+.
+.IP "\(bu" 4
+Content\-Base gives an absolute URL base, or "starting point",for relative URLs that appear in other MIME headers and in HTML documents that do not contain any BASE HTML elements\. Content\-Location specifies the URL that corresponds to the content of the body part that contains this header\.
+.
+.IP "" 0
+.
+.SH "Drawbacks"
+.
+.IP "\(bu" 4
+inlining image content twice
+.
+.IP "\(bu" 4
+overall css size increase
+.
+.IP "" 0
+.
+.P
+to avoid double size increase, probably the best way to use both
+datauris/mhtml would be to rely on something like this \fIhttp://jashkenas\.s3\.amazonaws\.com/misc/jammit_example/jammit\.html\fR:
+.
+.IP "" 4
+.
+.nf
+<!\-\-[if (!IE)|(gte IE 8)]><!\-\->
+  <link href="assets/silk\-datauri\.css" media="screen" rel="stylesheet" type="text/css" />
+<!\-\-<![endif]\-\->
+<!\-\-[if lte IE 7]>
+  <link href="assets/silk\-mhtml\.css" media="screen" rel="stylesheet" type="text/css" />
+<![endif]\-\->
+.
+.fi
+.
+.IP "" 0
+.
+.P
+Thus producing two version of the css files\.

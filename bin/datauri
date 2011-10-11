@@ -1,0 +1,146 @@
+#!/usr/bin/env node
+
+var fs = require('fs'),
+  path = require('path'),
+  mime = require('mime'),
+  spawn = require('child_process').spawn
+
+// Monolithic script, first try and experiment at trying
+// to automate the embedding of images in CSS files.
+//
+// Have to work with both data URI and mhtml for IE < 8
+//
+
+// ## usage
+//
+//    ./datauri file1.css file2.css file3.css
+//    ./datauri css/*.css
+//
+// images references gets replaced by their base64 equivalent:
+//
+// * datauris: for FF, Safari, O, Chrome, IE < 8
+// * mhtml: for IE < 8
+//
+// ideally, rely on `.ie6` and `.ie7` html css class placeholder.
+//
+// Path in css are declared relatively, this script will lookup them
+// based on the css file path.
+//
+// Should only inline imgs < 32 kilobytes
+
+var files = process.argv.slice(2);
+
+// This is non-sense, but mhtml have to use absolute path to the css files
+var config = {
+  host: 'http://example.com'
+};
+
+// before running anything, check if the first argument is 'help' or not. If it is, output man page.
+if(files[0] === 'help') return help();
+
+// first iterate over css files, get hash obj with filepath/content
+var css = files.map(function(file) {
+  return {
+    file: path.resolve(file),
+    content: fs.readFileSync(path.resolve(file), 'utf8')
+  };
+});
+
+// first iteration, this time we'll generate mhtml equivalent
+// and try to automatically add rules for `.ie6`, `.ie7` placeholder
+css.forEach(function(it) {
+
+  // only work with single line declaration, eg.
+  //
+  //    #book_go { background: url(../images/embed/book_go.png); }
+  //
+  it.content = it.content.replace(/(.+)\{(.+url\(.+\).+)\}/gm, function(w, selector, block) {
+
+    var ieholder = [
+      '.ie6 :selector, .ie7 :selector {'.replace(/:selector/g, selector.trim()),
+      block.replace(/url\((.+)\)/, function(w, url) {
+        // first pass, simply putting a marker, this is non valid
+        // mhtml syntax. Will be replaced properly on next step
+        return 'mhtml(' + url + ')';
+      }),
+      '}',
+      ''
+    ].join('\n');
+
+    return w + '\n' + ieholder;
+  });
+
+});
+
+// then, iterate over styles and replace inline references,
+// also builds up the mhtml front comments.
+css.forEach(function(it) {
+  var file = it.file,
+    shortpath = it.file.replace(process.cwd(), ''),
+    boundary = 'fooooobar',
+    mhtml = ['Content-Type: multipart/related; boudary="' + boundary + '"\n\n'];
+
+  // deal with datauris, replace inline url() by their base64 equivalent
+  it.content = it.content.replace(/url\((.+)\)/g, function(w, url) {
+    var cssfold = file.split('/').slice(0, -1).join('/'),
+      imgpath = path.resolve(cssfold, url),
+      base64 = toBase64(imgpath),
+      mhtmlPart = [
+        '--' + boundary,
+        'Content-Location:' + url.split('/').slice(-1).join('/'),
+        'Content-Transfer-Encoding:base64',
+        '',
+        base64,
+        ''
+      ].join('\n');
+
+    mhtml.push(mhtmlPart);
+
+    return 'url(data:{mediatype};base64,{base64})'
+      .replace('{mediatype}', mime.lookup(imgpath))
+      .replace('{base64}', base64);
+  });
+
+  mhtml.push('--' + boundary + '--');
+
+  it.content = '/* \n' + mhtml.join('\n') + '\n*/\n\n'  + it.content;
+
+  // now replace inline mhtlm() reference
+  it.content = it.content.replace(/mhtml\((.+)\)/g, function(w, url){
+    return getMHTML(shortpath, url.split('/').slice(-1).join('/'));
+  });
+});
+
+// write files, they're generated along the css files parsed,
+// with a `-datauri.css` suffix.
+css.forEach(function(item) {
+  var file = item.file.replace(/\.css$/, '-datauri.css');
+  console.log(' >> Generate ', file);
+  fs.writeFileSync(file, item.content);
+});
+
+// ## function helper
+function toBase64(path) {
+  return fs.readFileSync(path, 'base64');
+}
+
+function getMHTML(shortpath, ref) {
+  return 'url(mhtml:$host!$ref)'
+    .replace('$host', config.host + shortpath.replace(/\.css$/, '-datauri.css'))
+    .replace('$ref', ref);
+}
+
+function help() {
+  // use of stdio instead of process.openStdin and stdout to avoid hitting
+  // <Enter> to exit program after `:q` in man page.
+  var stdio = process.binding('stdio'),
+    ch = spawn('man', ['datauri'], {
+      customFds: [stdio.stdinFD, stdio.stdoutFD, stdio.stderrFD]
+    });
+
+  ch.on('exit', function (code) {
+    process.exit(code);
+  });
+
+  return ch;
+}
