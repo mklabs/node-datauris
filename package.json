@@ -4,6 +4,7 @@
   "description": "script to automate embedding of base64 images in CSS files",
   "version": "0.0.0",
   "bin": "./bin/datauri",
+  "lib": "./lib/datauri",
   "directories": {
     "man": "./docs/man/"
   },
