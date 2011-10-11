@@ -10,22 +10,22 @@
 
 div{display:block;float:left;width:16px;height:16px;margin:10px;}
 
-#accept { background: url(./images/embed/accept.png); }
-#add { background: url(./images/embed/add.png); }
-#anchor { background: url(./images/embed/anchor.png); }
-#application { background: url(./images/embed/application.png); }
-#application_add { background: url(./images/embed/application_add.png); }
-#application_cascade { background: url(./images/embed/application_cascade.png); }
-#application_delete { background: url(./images/embed/application_delete.png); }
-#arrow_in { background: url(./images/embed/arrow_in.png); }
-#arrow_inout { background: url(./images/embed/arrow_inout.png); }
-#arrow_join { background: url(./images/embed/arrow_join.png); }
-#arrow_left { background: url(./images/embed/arrow_left.png); }
-#arrow_merge { background: url(./images/embed/arrow_merge.png); }
+#accept { background: url(../images/icons/accept.png); }
+#add { background: url(../images/icons/add.png); }
+#anchor { background: url(../images/icons/anchor.png); }
+#application { background: url(../images/icons/application.png); }
+#application_add { background: url(../images/icons/application_add.png); }
+#application_cascade { background: url(../images/icons/application_cascade.png); }
+#application_delete { background: url(../images/icons/application_delete.png); }
+#arrow_in { background: url(../images/icons/arrow_in.png); }
+#arrow_inout { background: url(../images/icons/arrow_inout.png); }
+#arrow_join { background: url(../images/icons/arrow_join.png); }
+#arrow_left { background: url(../images/icons/arrow_left.png); }
+#arrow_merge { background: url(../images/icons/arrow_merge.png); }
 
 /* sadly, the regex used to generate .ie6, .ie7 placeholder won't catch block declaration */
 #book_key {
  color: red;
  font-size: 20px;
- background: url(./images/embed/book_key.png);
+ background: url(../images/icons/book_key.png);
 }
