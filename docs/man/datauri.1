@@ -17,6 +17,46 @@ datauri css/*\.css
 .SH "Description"
 quick experiment on datauris / mhtml images embedding\.
 .
+.SH "Quick start"
+Install the package
+.
+.IP "" 4
+.
+.nf
+  git clone git://github\.com:mklabs/node\-datauris\.git && cd node\-datauris && npm link
+.
+.fi
+.
+.IP "" 0
+.
+.P
+once in npm, running \fBnpm install\fR will be easier, but for now a git clone + npm link is enough\.
+.
+.P
+To run the script on the example files in css/, first, get the icon set\.
+.
+.IP "" 4
+.
+.nf
+  wget wget http://www\.famfamfam\.com/lab/icons/silk/famfamfam_silk_icons_v013\.zip
+  unzip famfamfam_silk_icons_v013\.zip \-d images/
+.
+.fi
+.
+.IP "" 0
+.
+.P
+then run
+.
+.IP "" 4
+.
+.nf
+datauri examples/example\.css
+.
+.fi
+.
+.IP "" 0
+.
 .SH "Ressources"
 .
 .IP "\(bu" 4

@@ -4,7 +4,8 @@ var fs = require('fs'),
   path = require('path'),
   mime = require('mime'),
   spawn = require('child_process').spawn,
-  datauri = require('../lib/datauri');
+  datauri = require('../lib/datauri'),
+  helper = require('../lib/helper');
 
 // Monolithic script, first try and experiment at trying
 // to automate the embedding of images in CSS files.
@@ -32,7 +33,7 @@ var fs = require('fs'),
 var files = process.argv.slice(2);
 
 // before running anything, check if the first argument is 'help' or not. If it is, output man page.
-if(files[0] === 'help') return help();
+if(files[0] === 'help') return helper.help();
 
 // first iterate over css files, get hash obj with filepath/content
 var css = files.map(datauri.cssMap);

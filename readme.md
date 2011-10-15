@@ -10,22 +10,40 @@ node-datauri(1) -- node-script to automate the embedding of base64 images in CSS
 
 quick experiment on datauris / mhtml images embedding.
 
+## Quick start
+
+Install the package
+
+      git clone git://github.com:mklabs/node-datauris.git && cd node-datauris && npm link
+
+once in npm, running `npm install` will be easier, but for now a git clone + npm link is enough.
+
+To run the script on the example files in css/, first, get the icon set.
+
+      wget wget http://www.famfamfam.com/lab/icons/silk/famfamfam_silk_icons_v013.zip
+      unzip famfamfam_silk_icons_v013.zip -d images/
+
+then run
+
+    datauri examples/example.css
+
+## documentation
+
+To display the documentation (simply this readme for now), just run
+
+    datauri help
+
 ## Ressources
 
 * http://www.nczonline.net/blog/2009/10/27/data-uris-explained/
 * http://www.nczonline.net/blog/2009/11/03/automatic-data-uri-embedding-in-css-files/
-
 * http://nimbupani.com/using-data-uris-in-css.html
-
 * http://www.phpied.com/data-urls-what-are-they-and-how-to-use/
 * http://www.phpied.com/mhtml-when-you-need-data-uris-in-ie7-and-under/
 * http://www.phpied.com/data-uris-mhtml-ie7-win7-vista-blues/
 * http://www.phpied.com/inline-mhtml-data-uris/
-
 * http://www.stevesouders.com/blog/2009/11/16/cssembed-automatically-data-uri-ize/
-
 * http://msdn.microsoft.com/en-us/library/ms526265(v=exchg.10).aspx
-
 * http://documentcloud.github.com/jammit/#embedding
 
 Recommandation from documentcloud/jammit:
