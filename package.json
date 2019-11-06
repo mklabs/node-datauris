@@ -9,6 +9,6 @@
     "man": "./docs/man/"
   },
   "dependencies": {
-    "mime": "~1.2.4"
+    "mime": "~2.4.4"
   }
 }
